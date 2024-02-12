@@ -9,12 +9,6 @@ def load_data(file_name):
     data = np.array([list(row) for row in df.values])
     return data
 
-def inertia(x):
-    x_mean = np.mean(x, axis = 0)
-    var = np.sum((x - x_mean) ** 2)
-    return var
-    
-
 def find_optimal_k(data):
     k_range = [i for i in range(1, 15 + 1)]
     inertias = []
@@ -23,13 +17,7 @@ def find_optimal_k(data):
         kmeans = KMeans(n_clusters =  k, n_init = 10)
         # it seems the nstart parameter is replaced by n_init
         kmeans.fit(data)
-        labels = kmeans.predict(data)
-        sum = 0
-        for i in range(k):
-            samples = [data[j] for j in range(len(data)) if labels[j] == i]
-            sum += inertia(samples)
-        #sum /= k
-        inertias.append(sum)
+        inertias.append(kmeans.inertia_)
 
     plt.plot(k_range, inertias, 'o-')
     plt.xlabel('k')
@@ -46,12 +34,7 @@ def test_optimal_k(data, k = 4):
     for i in range(k):
         cnt = len([y for y in labels if y == i])
         print(f'# observation in class {i} is {cnt}')
-    sum = 0
-    for i in range(k):
-        samples = [data[j] for j in range(len(data)) if labels[j] == i]
-        sum += inertia(samples)
-    #sum /= k
-    print(f'inertia when k = {k}: {sum}')
+    print(f'inertia when k = {k}: {kmeans.inertia_}')
     visualize_data(data, labels, k)
 
 def visualize_data(data, labels, k):
