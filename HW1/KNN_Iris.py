@@ -68,6 +68,6 @@ if __name__ == '__main__':
     knn = KNeighborsClassifier(n_neighbors = 9)
     knn.fit(X, y)
     #print(test(X, y, knn))
-    flower = [[5.0, 4.1, 3.8, 1.2]]
+    flower = [[3.8, 5.0, 1.2, 4.1]]
     idx = knn.predict(flower)[0]
     print(f'Predicted class id: {idx}')
