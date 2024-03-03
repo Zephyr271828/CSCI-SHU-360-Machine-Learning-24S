@@ -166,21 +166,56 @@
     \section{Locality Sensitive Hashing (LSH)}
 
         \subsection{}
-        
+        We set $c=1$ and perform a binary search of $r$ in the range $[0, m]$ until for some $r$ the query returns nothing, and for $r+1$, the query returns some point $x'$.
+        The returned point $x'$ is the nearest neighbor of $q$. The time complexity of this algorithm is $O(\log m)$, and the query is called for at worst $2\log m$ times.
 
         \subsection{}
-
-
-        \subsection{}
-
-
-        \subsection{}
-
+        Assume $d(x_i, x_j)=r'$, then $\big{|}\{a|x_i[a]=x_j[a]\}\big{|}=m-r'$, $\big{|}\{a|x_i[a]\neq x_j[a]\}\big{|}=r'$, then $Pr(h(x_i)=h(x_j))=Pr_{a\in\{0,1,\dots,m-1\}}(x_i[a]=x_j[a])=\frac{m-r'}{m}=1-\frac{r'}{m}$.
+        Because $r'\leq r$, $p_1=\min_{r'}Pr(h(x_i)=h(x_j))=1-\frac{r}{m}$.
+        Similarly, when $d(x_i, x_j)=r'\geq cr$, $p_2=\max_{r'}Pr(h(x_i)=h(x_j))=1-\frac{cr}{m}$.
 
         \subsection{}
-        
+        When $d(x_i, x_j)\leq r$,
+        \begin{align*}
+            Pr(g(x_i)=g(x_j))&=Pr(h_1(x_i)=h_1(x_j)\wedge h_2(x_i)=h_2(x_j)\wedge\dots\wedge h_k(x_i)=h_k(x_j))\\
+            &=Pr(x_i[a_1]=x_j[a_1]\wedge x_i[a_2]=x_j[a_2]\wedge\dots\wedge x_i[a_k]=x_j[a_k])\\
+            &=Pr(x_i[a_1]=x_j[a_1])Pr(x_i[a_2]=x_j[a_2])\dots Pr(x_i[a_k]=x_j[a_k])\geq p_1^k
+        \end{align*}
+        Similarly, when $d(x_i, x_j)\geq cr$, $Pr(g(x_i)=g(x_j))\leq p_2^k$.
+
+        \subsection{}\label{4.4}
+        \begin{align*}
+            Pr(\exists b, g_b(x_i)=g_b(x_j))&=Pr(g_0(x_i)=g_0(x_j)\lor g_1(x_i)=g_1(x_j)\lor\dots\lor g_{l-1}(x_i)=g_{l-1}(x_j))\\
+            &=1-Pr(g_0(x_i)\neq g_0(x)\wedge g_1(x_i)\neq g_1(x)\wedge\dots\wedge g_{l-1}(x_i)\neq g_{l-1}(x))\\
+            &=1-\Pi_{b=0}^{l-1}(1-Pr(g_b(x_i)=g_b(x_j)))
+        \end{align*}
+        When $d(x_i, x_j)\leq r$, $Pr(\exists b, g_b(x_i)=g_b(x_j))\geq 1-(1-p_1^k)^l$; when $d(x_i, x_j)\geq cr$,
+        $Pr(\exists b, g_b(x_i)=g_b(x_j))\leq 1-(1-p_2^k)^l$.
+
+        \subsection{}\label{4.5}
+        \textbf{(a)} Because $d(x', q)\leq r$, we know from \ref{4.4} that 
+        \begin{align*}
+            Pr(\exists b, g_b(x_i)=g_b(x_j))\geq 1 - (1-p_1^k)^l=1-(1-p_1^{\frac{\ln(n)}{\ln(1/p2)}})^{n^{\frac{\ln(p_1)}{\ln(p_2)}}}
+        \end{align*}
+        where $p_1^{\frac{\ln(n)}{\ln(1/p2)}}=e^{\frac{\ln(p1)\ln(n)}{\ln(1/p2)}}=e^{-\frac{\ln(p1)\ln(n)}{\ln(p2)}}=n^{-\frac{\ln(p1)}{\ln(p2)}}=(n^{\frac{\ln(p_1)}{\ln(p_2)}})^{-1}$.
+        Let $n^{\frac{\ln(p_1)}{\ln(p_2)}}=k$, because $(1-\frac{1}{k})^k<e^{-1}$, $Pr(\exists b, g_b(x_i)=g_b(x_j))\geq(1-\frac{1}{k})^k>1-e^{-1}$.\\
+        \textbf{(b)} Let $X$ be the number of $x$'s in \textbf{X} such that $d(x,q)\geq cr$ and $g_b(x)=g_b(q)$. By Markov inequality, $Pr(X\geq 4l)\leq \frac{\mathbb{E}(X)}{4l}$.
+        We know 
+        \begin{align*}
+            \mathbb{E}(X)&=n\cdot Pr(\exists b, g_b(x_i)=g_b(x_j))\leq n\cdot\left(1-(1-p_2^k)^l\right)\\
+            &=n\cdot\left(1-(1-e^{-\frac{\ln(p_2)\ln(n)}{\ln(p_2)}})^l\right)=n\cdot\left(1-(1-\frac{1}{n})^l\right)\leq n\cdot(1-(1-\frac{l}{n}))=l
+        \end{align*}
+        Therefore, $P(X>4l)\leq \frac{\mathbb{E}(X)}{4l}\leq \frac{l}{4l}=\frac{1}{4}$, $P(X\leq 4l)\geq 1-\frac{1}{4}=\frac{3}{4}$.\\
+        \textbf{(c)} Now we consider the scenario where both events happen. Because for any data point $x\in \textbf{X}$, it is impossible that $d(x,q)\leq r$ while $d(x,q)\geq cr$,
+        hence the domain of the two events are disjoint, the two events are independent.
+        Therefore, lower bound of the probability that both events happen is equal to $\frac{3}{4}(1-e^{-1})$.
 
         \subsection{}
+        We know that the second event in \ref{4.5} happend with certainty, i.e., there are at most $4l$ $x$'s $\in\text{X}$ such that 
+        $g_b(x)=g_b(q),d(x,q)\geq cr$. Therefore, we need to check at least $4l+1$ points from the collected points to guarantee we can have a point $x'$ such that
+        $g_b(x')=g_b(q),d(x',q)\leq cr$.\\
+        On the other hand, we are guaranteed that such a data point $x'$ exists, because the first event in \ref{4.5} happen for certain,
+        i.e., $\exists x'\in X, b\in\{0,1,\dots,l-1\}$ such that $g_b(x')=g_b(q), d(x',q)\leq r\rightarrow d(x',q)\leq cr$.
         
 
     \section{Programming Problem: Linear Regression}
