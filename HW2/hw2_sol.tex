@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage[a4paper, total={6.5in, 9in}]{geometry}
+\usepackage[a4paper, total={7in, 9in}]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
@@ -79,16 +79,12 @@
         \subsection{}
         We know $\frac{\rho_m(\hat{r}+\epsilon)}{\rho_m(\hat{r})}
         =\frac{\exp(-\frac{(\hat{r}+\epsilon)^2}{2\sigma^2})}{\exp(-\frac{\hat{r}^2}{2\sigma^2})}\cdot\frac{(\hat{r}+\epsilon)^{m-1}}{\hat{r}^{m-1}}
-        =\exp(-\frac{2\hat{r}\epsilon+\epsilon^2}{2\sigma^2})\cdot (1+\frac{\epsilon}{\hat{r}})^{m-1}$, where $m\to\infty$, 
-        hence $(1+\frac{\epsilon}{\hat{r}})^{m-1}\to(1+\frac{\epsilon}{\sqrt{m}\sigma})^m=\left((1+\frac{\epsilon}{\sqrt{m}\sigma})^{\sqrt{m}}\right)^{\sqrt{m}}$,
-        where $(1+\frac{\epsilon}{\sqrt{m}\sigma})^{\sqrt{m}}=\sum_{n=1}^{\sqrt{m}}{\sqrt{m}\choose n}\left(\frac{\epsilon}{\sqrt{m}\sigma}\right)^n
-        \to\sum_{n=1}^{\sqrt{m}}\frac{(\sqrt{m})^n}{n!}\left(\frac{\epsilon}{\sqrt{m}\sigma}\right)^n=\sum_{n=1}^{\sqrt{m}}\frac{1}{n!}\left(\frac{\epsilon}{\sigma}\right)^n
-        \to\exp(\frac{\epsilon}{\sigma})$ as $m\to\infty$.\\
-        Therefore, $\frac{\rho_m(\hat{r}+\epsilon)}{\rho_m(\hat{r})}\to
-        \exp(-\frac{2\hat{r}\epsilon+\epsilon^2}{2\sigma^2})\cdot\left(\exp(\frac{\epsilon}{\sigma})\right)^{\sqrt{m}}
-        \to\exp(-\frac{2\hat{r}\epsilon+\epsilon^2}{2\sigma^2})\cdot\left(\exp(\frac{\epsilon}{\sigma})\right)^{\frac{\hat{r}}{\sigma}}
-        =\exp(-\frac{2\hat{r}\epsilon+\epsilon^2}{2\sigma^2}+\frac{\epsilon\hat{r}}{\sigma^2})=\exp(-\frac{\epsilon^2}{2\sigma^2})$, 
-        hence $\rho(\hat{r}+\epsilon)\approx\rho(\hat{r})\exp(-\frac{\epsilon^2}{2\sigma^2})$
+        =\exp(-\frac{2\hat{r}\epsilon+\epsilon^2}{2\sigma^2})\cdot (1+\frac{\epsilon}{\hat{r}})^{m-1}$,
+        where $(1+\frac{\epsilon}{\hat{r}})^{m-1}=(1+\frac{\epsilon}{\hat{r}})^{\frac{\hat{r}^2}{\sigma^2}}=\exp(\frac{\hat{r}^2}{\sigma^2}\ln(1+\frac{\epsilon}{\hat{r}}))$. 
+        By Taylor's expansion, $\ln(1+x)=\sum_{n=1}^{\infty}(-1)^n\cdot\frac{x^n}{n}= x-\frac{x^2}{2}+\dots$. We know that $\epsilon\ll\hat{r}$, hence $\frac{\epsilon}{\hat{r}}\to 0$, $\ln(1+\frac{\epsilon}{\hat{r}})\approx\frac{\epsilon}{\hat{r}}-\frac{\epsilon^2}{2\hat{r}^2}$,
+        $\exp(\frac{\hat{r}^2}{\sigma^2}\ln(1+\frac{\epsilon}{\hat{r}}))\approx\exp(\frac{\hat{r}\epsilon}{\sigma^2}-\frac{\epsilon^2}{2\sigma^2})$. 
+        Therefore, $\frac{\rho_m(\hat{r}+\epsilon)}{\rho_m(\hat{r})}\approx\exp(-\frac{2\hat{r}\epsilon+\epsilon^2}{2\sigma^2})\cdot\exp(\frac{\hat{r}\epsilon}{\sigma^2}-\frac{\epsilon^2}{2\sigma^2})=\exp(-\frac{\epsilon^2}{\sigma^2})$,
+        $\rho_m(\hat{r}+\epsilon)\approx\rho_m(\hat{r})e^{-\frac{\hat{r}^2}{\sigma^2}}$.
 
         \subsection{}
         As we learned in \ref{2.5}, when we are sampling from a high-dimensional Gaussian distribution, i.e., $m$ is large enough, 
