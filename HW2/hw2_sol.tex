@@ -301,7 +301,7 @@
         resulting in high $RMSE$ on both train set and test set.
 
         \subsection{}
-        We picked out the 3 most significant features as noted in \ref{5.1} and \ref{5.2}, clipped the data by keeping only those 3 features,
+        We picked out the 3 most significant features as noted in \ref{5.2}, clipped the data by keeping only those 3 features,
         and trained a linear regression model and a ridge regression model ($\eta=45.0$) on the clipped data. Afterwards, we calculated the $RMSE$ on train and test set under the new model.
         The results are as follows:
         \begin{table}[hbt!]
@@ -311,14 +311,14 @@
                 \multirow{2}{*}{\diagbox{dataset}{$\eta$}}&linear regression&ridge regression\\
                 &0&45.0\\
                 \hline
-                train set&5.4798&5.4807\\
+                train set&5.2734&5.2872\\
                 \hline
-                test set&5.6279&5.6123\\
+                test set&5.4947&5.4659\\
                 \hline
             \end{tabular}
             \caption{RMSE of train set and test set under different $\eta$'s.Note linear regression can be viewed as a special case of ridge regression where $\eta=0$.}
         \end{table}\\
-        Compared to the $RMSE$ we obtained in \ref{5.4} where we used all 13 features for training and prediction, the $RMSE$ obtained with only 3 features does increases by at most 13.7\%.\\
+        Compared to the $RMSE$ we obtained in \ref{5.4} where we used all 13 features for training and prediction, the $RMSE$ obtained with only 3 features increases by at most 9\%.
         This implies by using only the top3 most significant features to predict the house prices, 
         we can still obtain a comaparable performance compared to that of using all features, while cutting down the dimension of the feature space and saving computing power considerably.
 
