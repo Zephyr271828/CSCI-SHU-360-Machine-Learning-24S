@@ -61,12 +61,19 @@
         \end{align*}
 
         \subsection{}
+        After training after modifying the logits $z'$, we obtained the results as follows. 
+        The training result is quite desirable and no overflow occurred throughout the process.
         \begin{figure}[hbt!]
             \centering
-            \includegraphics[width=0.5\textwidth]{figs/1.2.pdf}
+            \includegraphics[width=0.5\textwidth]{../figs/1.2.pdf}
             \caption{Loss-Iteration curve of vanilla logistic regression with different learning rates}
             \label{fig:1.2}
-        \end{figure}
+        \end{figure}\\
+        Next we want to explain this modification is correct from a mathematical perspective. 
+        Suppose for one data sample $X_i$ we have $z_i'=z_i-\max_{j}z_{ij}$.  Let $\max_{j}z_{ij}=z_{i}^{*}$, then $\Pr(y_i=k|X_i)=\frac{\exp(z_{ik})}{\sum_{j=1}^{c}\exp(z_{ij})}$,
+        $\Pr'(y_i=k|X_i)=\frac{\exp(z_{ik}')}{\sum_{j=1}^{c}\exp(z_{ij}')}=\frac{\exp(z_{ik}-z_{i}^{*})}{\sum_{j=1}^{c}\exp(z_{ij}-z_{i}^{*})}
+        =\frac{\exp(z_{ik})/\exp(z_{i}^{*})}{\left(\sum_{j=1}^{c}\exp(z_{ij})\right)/\exp(z_{i}^{*})}=\frac{\exp(z_{ik})}{\sum_{j=1}^{c}\exp(z_{ij})}=\Pr(y_i=k|X_i)$.,
+        hence modifying the logits $z$ does not change the overall results.
         
         \subsection{}
         By comparing the curves \hyperref[fig:1.2]{Figure 1}, we have 2 observations on the pros and cons of large/small learning rates:\\
@@ -110,7 +117,7 @@
         \vspace{-20pt}
         \begin{figure}[hbt!]
             \centering
-            \includegraphics[width=0.5\textwidth]{figs/1.4.pdf}
+            \includegraphics[width=0.5\textwidth]{../figs/1.4.pdf}
             \caption{Loss-Iteration curve of minibatch logistic regression with different learning rate=0.001/0.01,
             weight decay=0.05, max epoch=500, annealing rate=0.5.}
             \label{fig:1.4}
@@ -132,9 +139,11 @@
             \end{tabular}
             \caption{final loss value, train accuracy, and test accuracy when learning rate=0.001/0.01,
             weight decay=0.05, max epoch=500, annealing rate=0.5.}
+            \label{tab:1.4}
         \end{table}\\
         Considering all the experiment results we obtained, we decide the set of optimal hyper parameters are:
         \textbf{batch size=50, learning rate=0.01, and weight decay=0.05. The impact of learning rate annealing and max epoch on the performance can be ignored.}
+        The results of the optimal setting are displayed in \hyperref[fig:1.4]{Figure 2} and \hyperref[tab:1.4]{Table 1}.
 
         \subsection{}
         In order to investigate the convergence of the curves, we first fixed the learning rate to 0.01,
@@ -143,17 +152,18 @@
         the curve with batch size 10 ends up with a much larger final value of loss function. \\
         \begin{figure}[hbt!]
             \centering
-            \includegraphics[width=0.5\textwidth]{figs/1.5.pdf}
+            \includegraphics[width=0.5\textwidth]{../figs/1.5.pdf}
             \caption{Loss-Iteration curve of minibatch logistic regression with earning rate=0.01,
             batch size=10/50/ 100.}
             \label{fig:1.5}
         \end{figure}\\
         Next, we scaled the learning rates linearly w.r.t the batch sizes. Because batch size=50 performs the best when learning rate=0.01,
         we assume 0.01 is the appropriate learning rate for batch size=50, and adjust the learning rates for batch size=10/100 based on 0.01:
-        learning rate = $0.01\cdot\frac{10}{50}=0.002$ for batch size=10, learning rate = $0.01\cdot\frac{100}{50}=0.02$. The results are as follows:
+        learning rate = $0.01\cdot\frac{10}{50}=0.002$ for batch size=10, learning rate = $0.01\cdot\frac{100}{50}=0.02$. 
+        The results are shown in \hyperref[fig:1.6]{Figure 4}:
         \begin{figure}[hbt!]
             \centering
-            \includegraphics[width=1\textwidth]{figs/1.6.pdf}
+            \includegraphics[width=1\textwidth]{../figs/1.6.pdf}
             \caption{Loss-Iteration curve of minibatch logistic regression with earning rate=0.01,
             batch size=10/50/ 100.}
             \label{fig:1.6}
@@ -174,8 +184,106 @@
         the amount of update in each epoch $\approx \#\text{time updated}\times\text{learning rate}\times\text{gradient}$ almost remains constant,
         resulting in comparable model performance.
 
-
-
     \section{Lasso}
+        \subsection{}\label{2.1}
+        We performed coordinate descent on the generated dataset. The loss-iteration curve obtained is shown in \hyperref[fig:2.1]{Figure 5}:
+        \begin{figure}[hbt!]
+            \centering
+            \includegraphics[width=0.5\textwidth]{../figs/2.1.pdf}
+            \caption{$F(\theta, \theta_0)$ v.s. coordinate descent step in coordinate descent. 
+            It is worth noticing the curve is non-increasing as the number of iterations increases, 
+            which corresponds to our expectations.}
+            \label{fig:2.1}
+        \end{figure}\\
+        We also collected the indices of non-zero elements in $\theta^{*}$ and elements in $\hat{\theta}$ with absolute value $>1.1\times 10^{-1}$.
+        The results are as follows:
+        \begin{itemize}
+            \item indices non-zero elements in $\theta^{*}$: (0, 1, 2, 3, 4)
+            \item indices of elements with absolute value $>1.1\times 10^{-1}$ in $\hat{\theta}$: (0, 1, 2, 3, 4, 12, 52)
+        \end{itemize}
+        Given $1.1\times 10^{-1}$ is much smaller than 10(the absolute value of non-zero elements in $\theta^{*}$),
+        the prediction by lasso is consistent with the ground truth, which indicates our coordinate descent generates a reasonable result.
+
+        \subsection{}
+        \begin{table}[hbt!]
+            \centering
+            \begin{tabular}{|c|c|c|c|}
+                \hline
+                precision&recall&rmse&sparsity\\
+                \hline\hline
+                38.46\%&100.0\%&0.8593&13\\
+                \hline
+            \end{tabular}
+            \caption{Evaluation metrics obtained from $\theta$ calculated in \ref{2.1}}
+        \end{table}
+
+        \subsection{}
+        After experimenting with 50 different values of $\lambda$ evenly spaced from $\lambda_{min}=0$ to $\lambda_{max}=||(y-\bar{y})X||_{\infty}$,
+        we obtained the precision\&recall vs. $\lambda$ plot as shown in \hyperref[fig:2.3.1]{Figure 6}:
+        \begin{figure}[hbt!]
+            \centering
+            \includegraphics[width=0.5\textwidth]{../figs/2.3.1.pdf}
+            \caption{precision\&recall vs. $\lambda$ plot}
+            \label{fig:2.3.1}
+        \end{figure}\\
+        Some key observations from the plot are: (1) when $\lambda$ is very small, the precision is very low while the recall is very high. 
+        This is because the model only has a small penalty on the norms of the weights,
+        and tends to make weights non-zero to fit the data better. 
+        As a result, the model is able to cover all the non-zero elements in $\theta^{*}$,
+        while $|\{\text{non-zero indices in } \hat{\theta}\}|$ is large as well, leading to high recall and low precision.\\
+        (2) when $\lambda$ is very large, the precision is very high while the recall decreases and becomes very low.
+        On the one hand, the model has strong penalty on the norms of the weights, 
+        hence $|\{\text{non-zero indices in } \hat{\theta}\}|$ becomes smaller and only the weights that are non-zero in $\theta^{*}$ as well will be kept, resulting in high precision.
+        On the other hand, the penalty is so strong that the model fails to cover all the non-zero weights in $\theta^{*}$, resulting in low recall.\\
+        (3) when the value of $\lambda$ is neither too large nor too small, there is an interval where both precision and recall are 100\%.\\
+        (4) when $\lambda$ is extremely large($>600$), all the weights in $\hat{\theta}$ will become 0, resulting in a zero-division error in our program.
+        \begin{figure}[hbt!]
+            \centering
+            \includegraphics[width=0.5\textwidth]{../figs/2.3.2.pdf}
+            \caption{The value of different weights vs. $\lambda$ plot. 
+            Note the weights which are non-zero in $\theta^{*}$ are plotted in red, 
+            whereas weights that are zero in $\theta^{*}$ are plotted in blue.}
+            \label{fig:2.3.2}
+        \end{figure}\\
+        We also inspected the change of the values of the weights as $\lambda$ increases. Results are shown in \hyperref[fig:2.3.2]{Figure 7}.
+        The weights that are non-zero in $\theta^{*}$ are plotted in red, whereas zero weights are plotted in blue.
+        It is evident that as $\lambda$ grows, the values of the "zero-weights" converge to 0 very quickly,
+        while the absolute values of the "non-zero weights" shrink much slower and eventually converge to 0 as well.
+        The point where all the blue curves reach 0($\lambda\approx 50$) corresponds to the point that precision reaches 100\% in \hyperref[fig:2.3.1]{Figure 6}($\lambda\approx 50$).
+        \begin{figure}[hbt!]
+            \centering
+            \includegraphics[width=0.5\textwidth]{../figs/2.3.2-sigma10.pdf}
+            \caption{The value of different weights vs. $\lambda$ plot when $\sigma=10.0$. 
+            Note the weights which are non-zero in $\theta^{*}$ are plotted in red, 
+            whereas weights that are zero in $\theta^{*}$ are plotted in blue.}
+            \label{fig:2.3.3}
+        \end{figure}\\
+        Next, we changed the standard deviation of the data generator that generated $X$ and $y$ from 1 to 10,
+        and obtained a new lasso solution path plot, as shown in \hyperref[fig:2.3.3]{Figure 8}.
+        Some key observations are:\\
+        (1) the blue curves converge much slower and randomly than their counterparts in \hyperref[fig:2.3.2]{Figure 7}.\\
+        (2) the red curves converge at almost the same rate but much more randomly, with march larger gap between curves of the same color (the same for blue curves).\\
+        (3) There is one blue curve that converges to 0 after a red curve converge to 0.
+        Consequently, there does not exist a $\lambda$ such that both precision and recall are equal to 100\%.
+        In other words, more variance in the data bring more difficulty for the optimization of the model, making it less likely to perform well on all metrics.
+
+        \subsection{}
+        \begin{figure}[hbt!]
+            \centering
+            \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=50m=75.pdf}
+            \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=50m=150.pdf}
+            \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=50m=1000.pdf}\\
+            \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=100m=75.pdf}
+            \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=100m=150.pdf}
+            \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=100m=1000.pdf}
+            \caption{}
+            \label{fig:2.4}
+        \end{figure}
+
+        
+        \subsection{}
+
+
+
 
 \end{document}
