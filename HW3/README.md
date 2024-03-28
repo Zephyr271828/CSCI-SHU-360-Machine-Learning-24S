@@ -1,1 +1,1 @@
-Only half of homework 3 is completed for now. I will work on the second half in the next one or two days.
+Sorry for the late upload of the homework3. Due to some personal reasons I started homework3 quite late, and the quality and efficiency of my work are not guaranteed.
