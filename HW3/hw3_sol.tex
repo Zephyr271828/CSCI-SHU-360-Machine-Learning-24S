@@ -268,6 +268,28 @@
         In other words, more variance in the data bring more difficulty for the optimization of the model, making it less likely to perform well on all metrics.
 
         \subsection{}
+        In this section, we tried different combinations of $n$ and $m$ - ($n=50$,$m=75$), ($n=50$, $m=150$), ($n=50$, $m=1000$), ($n=100$, $m=75$), ($n=100$, $m=150$), ($n=100$, $m=1000$) - to explore the robustness of the model under different settings.
+        We inspected the values of $\lambda$ that result in both good precision and recall (\hyperref[tab:2.4]{Table 3}).
+
+        \begin{table}[hbt!]
+            \centering
+            \begin{tabular}{|c|c|c|c|}
+                \hline
+                \diagbox{$n$}{$m$}&75&150&1000\\
+                \hline
+                50&[50, 380]&[40, 420]&[200, 440]\\
+                \hline
+                100&[50, 900]&[40, 750]&[50, 640]\\
+                \hline
+            \end{tabular}
+            \caption{The intervals of "good $\lambda$'s" where both precision and recall are high.
+            Note for n=50, m=1000, even in the optimal interval we only have precision and recall$\approx0.8$.
+            For other combinations of $n$ and $m$, both precision and recall are 1 within the intervals shown above.}
+            \label{tab:2.4}
+        \end{table}
+        \noindent We also plotted the lasso solution path plots corresponding to these combinations of $n$ and $m$.
+        The results are shown in \hyperref[fig:2.4]{Figure 9}.
+
         \begin{figure}[hbt!]
             \centering
             \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=50m=75.pdf}
@@ -276,13 +298,61 @@
             \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=100m=75.pdf}
             \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=100m=150.pdf}
             \includegraphics[width=0.3\textwidth]{../figs/2.3.2n=100m=1000.pdf}
-            \caption{}
+            \caption{Lasso solution path plot corresponding to different $n$ and $m$.}
             \label{fig:2.4}
         \end{figure}
 
         
         \subsection{}
-
+        \textbf{Implementation: }Compared to the previous dataset, 
+        this dataset has a much larger scale and demands a more efficient implementation of Lasso regression.
+        We made two major changes in the code: (1) replaced all the numpy 2d and 1d arrays with scipy.sparse arrays to save space and time.
+        (2) modified the way to compute $r$. Recall the definition $r_{i,j}=y_i-(\sum_{j'\neq j}w_{j'}x_{i,j'})$, 
+        hence $r_{j}=y-(\sum_{j'\neq j}w_{j'}x_{j'})$. 
+        Initially this was implemented by masking $w$ and $x$, but later we modified the method to $r_{j}=y-(\sum_{j'}w_{j'}x_{j'})+w_{j}x_{j}$.
+        Before the modification, the computation for $r,a,c$ took 0.008s, in contrast to 0.002s after the modification.
+        Therefore, the efficiency of lasso regression is improved significantly.
+        We compared the efficiency of the two implementations by checking the time for one iteration to run for the train set (n=30000, m=2500),
+        and the time it takes to run a randomly generated data with n=30000 and m=2500.
+        The modified version runs 5.60 sec for each iteration, whereas the old version took over 30 seconds to return the result.
+        \vspace{5pt}\\
+        \textbf{RMSE: }We modified $\lambda_{min}$ to $0.1\cdot\lambda_{max}$ and number of $\lambda$'s to 20.
+        The train \& validation RMSE vs. $\lambda$ curve is shown in \hyperref[fig:2.5.1]{Figure 10}:
+        \begin{figure}[hbt!]
+            \centering
+            \includegraphics[width=0.5\textwidth]{../figs/2.5.1.pdf}
+            \caption{The train \& validation RMSE vs. $\lambda$ curve we obtained.}
+            \label{fig:2.5.1}
+        \end{figure}\\
+        \textbf{Lasso Solution Path: }The lasso solution path curve we obtained is shown in \hyperref[fig:2.5.2]{Figure 11}:
+        \begin{figure}[hbt!]
+            \centering
+            \includegraphics[width=0.5\textwidth]{../figs/2.5.2.pdf}
+            \caption{The lasso solution paths.}
+            \label{fig:2.5.2}
+        \end{figure}
+        \vspace{5pt}\\
+        \noindent\textbf{Best $\lambda$: }By comparing the RMSE scores on the validation set, we selected the best $\lambda$ - \textbf{3.958},
+        and tested its performance on the test set. The test RMSE is \textbf{1.025}. 
+        The value is a little bit higher than what we have expected. One possible explanation is that $\lambda_{min}$ is set too large.
+        With smaller $\lambda$ we may be able to obtain better RMSE performance.
+        \vspace{5pt}\\
+        \textbf{Top-10 features} we selected the top 10 features with the highest absolute values of weights based on the best $\lambda$(3.958) we obtained.
+        The features and their weights are shown in \hyperref[tab:2.5]{Table 4}:
+        \begin{table}[hbt!]
+            \centering
+            \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|c|}
+                \hline
+                feature&great&not&best&amazing&love&delicious&rude&the worst&horrible&awesome\\
+                \hline\hline
+                weight&19.63&-17.75&17.06&14.34&12.23&12.13&-11.99&-11.95&-10.49&10.06\\
+                \hline
+            \end{tabular}
+            \label{tab:2.5}
+            \caption{The top 10 features with the highest absolute values of weights when using the best $\lambda$ value.}
+        \end{table}\\
+        The result in this table makes pretty much sense because the words with large positive weights are often associated with positive ratings,
+        whereas the words with small negative weights are relevant to negative remarks.
 
 
 
