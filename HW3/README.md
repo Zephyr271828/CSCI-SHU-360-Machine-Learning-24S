@@ -1,3 +1,6 @@
 Sorry for the late upload of the homework3. Due to some personal reasons I started homework3 quite late, and the quality and efficiency of my work are not guaranteed.
 
 Update on 4.23: it turns out I got a bad grade for HW3 qwq. Apologies to those who referred to my work and did not get a good grade as well. I don't have 100% confidence that my work is correct so please be cautious when you are using it.
+
+## Problem 1.2 Solution
+The max trick (or log trick) is used to prevent floating-point underflow when computing the posterior probability $P(y|x) \propto P(y) \prod_{i} P(x_i|y)$. Multiplying many probabilities between 0 and 1 can quickly result in a value smaller than the smallest representable floating-point number, causing it to underflow to 0. By applying the logarithm, the product becomes a sum: $\log P(y|x) = \log P(y) + \sum_{i} \log P(x_i|y)$. Since logarithms of small positive numbers are finite negative values, their sum avoids underflow and maintains numerical stability. Furthermore, because the logarithm is a monotonically increasing function, maximizing the log-probability is mathematically equivalent to maximizing the original probability, ensuring that model predictions remain correct.
